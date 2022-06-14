@@ -1,4 +1,5 @@
 mod banner;
+mod args;
 
 use threadpool::ThreadPool;
 use std::sync::mpsc::channel;
@@ -8,27 +9,6 @@ use std::io::{BufRead, BufReader};
 use clap::Parser;
 use tokio::time::Instant;
 use termion::{color};
-
-
-#[derive(Parser, Debug)]
-#[clap(author, version, about, long_about = None)]
-struct Args {
-    /// File path to the wordlist
-    #[clap(short, long)]
-    wordlist: String,
-
-    /// Hostname to be tested
-    #[clap(short, long)]
-    url: String,
-
-    /// File extensions
-    #[clap(short, long, multiple_values=true)]
-    extension: Vec<String>,
-
-    /// Number of parallel threads
-    #[clap(short, long, value_parser, default_value_t = 20)]
-    threads: u8
-}
 
 struct FileResult {
     path: String,
@@ -44,21 +24,21 @@ fn get_line_count(file_path: &str) -> usize {
 }
 
 fn main() {
-    println!("{}{}", color::Fg(color::LightMagenta), banner::banner());
+    let args = args::Args::parse();
 
-    let now = Instant::now();
-    let args = Args::parse();
+    println!("{}{}", color::Fg(color::LightMagenta), banner::banner());
 
     let threads = usize::from(args.threads);
 
     let line_count = get_line_count(&args.wordlist);
     let extension_count = &args.extension.len();
 
-    let reader = BufReader::new(File::open(args.wordlist).expect("Cannot open wordlist"));
+    let reader = BufReader::new(File::open(&args.wordlist).expect("Cannot open wordlist"));
 
     let pool = ThreadPool::new(threads);
     let (tx, rx) = channel();
 
+    let now = Instant::now();
     for line in reader.lines() {
         let l = line.unwrap();
         for extension in &args.extension {
