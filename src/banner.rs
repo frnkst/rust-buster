@@ -1,5 +1,5 @@
-pub fn banner() -> String {
-    r#"
+pub fn banner(url: &str, threads: &usize, wordlist: &str) -> String {
+    format!(r#"
 
 ██████╗ ██╗   ██╗███████╗████████╗
 ██╔══██╗██║   ██║██╔════╝╚══██╔══╝
@@ -14,6 +14,11 @@ pub fn banner() -> String {
 ██╔══██╗██║   ██║╚════██║   ██║   ██╔══╝  ██╔══██╗
 ██████╔╝╚██████╔╝███████║   ██║   ███████╗██║  ██║
 ╚═════╝  ╚═════╝ ╚══════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+Url:            {}
+Method:         {}
+Threads:        {}
+Wordlist:       {}
+User Agent:     {}
 
-"#.parse().unwrap()
+"#, url, String::from("GET"), threads, wordlist, String::from("rust-buster")).parse().unwrap()
 }
