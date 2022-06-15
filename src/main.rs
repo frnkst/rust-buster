@@ -35,13 +35,13 @@ fn main() {
                 let tx = tx.clone();
                 let url = args.url.to_owned().clone();
                 let ext = extension.to_owned().clone();
-                let m = l.clone();
+                let path = l.clone();
                 pool.execute(move || {
-                    let url = format!("{}{}{}.{}", url, "/", m, ext);
+                    let url = format!("{}{}{}.{}", url, "/", path, ext);
                     let status = reqwest::blocking::get(&url).unwrap().status();
                     let res = FileResult {
                         status,
-                        path: m.to_string(),
+                        path: path.to_string(),
                         extension: ext.to_string()
                     };
 
